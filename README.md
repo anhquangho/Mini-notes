@@ -14,7 +14,7 @@ WordPress themes, plugins, custom post types, forms and CRUD.
 
 - [x] Install WordPress locally
 - [x] Explore WordPress directory structure
-- [ ] Create a custom theme
+- [x] Create a custom theme
 - [ ] Create a notes plugin
 - [ ] Implement note CRUD
 
