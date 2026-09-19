@@ -1,0 +1,36 @@
+LOCAL-ACCESS.json
+wp-config.php
+*.sql
+*.zip
+work-install-*/
+wp-content/debug.log
+
+# WordPress Core
+/wp-admin/
+/wp-includes/
+/wp-*.php
+/index.php
+/license.txt
+/readme.html
+/xmlrpc.php
+ 
+# Local configuration and generated content
+/wp-config.php
+/.htaccess
+/wp-content/uploads/
+/wp-content/cache/
+/wp-content/upgrade/
+ 
+# Installed plugins and default themes
+/wp-content/plugins/*
+!/wp-content/plugins/mini-notes-core/
+/wp-content/themes/twenty*/
+
+# Generated test output
+docs/automated-results.txt
+ 
+# Local and editor files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
