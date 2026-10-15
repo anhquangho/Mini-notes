@@ -15,6 +15,9 @@
     <nav aria-label="Main navigation">
         <a class="nav-item <?php echo is_front_page() ? 'active' : ''; ?>" href="<?php echo esc_url(home_url('/')); ?>"><?php mini_notes_icon('home'); ?> Home</a>
         <a class="nav-item <?php echo is_page('dashboard') ? 'active' : ''; ?>" href="<?php echo esc_url(home_url('/dashboard/')); ?>"><?php mini_notes_icon('note'); ?> My notes</a>
+        <?php if (function_exists('wc_get_page_permalink')) : ?>
+            <a class="nav-item <?php echo function_exists('is_woocommerce') && (is_woocommerce() || is_cart() || is_checkout() || is_account_page()) ? 'active' : ''; ?>" href="<?php echo esc_url(wc_get_page_permalink('shop')); ?>"><?php mini_notes_icon('shop'); ?> Shop</a>
+        <?php endif; ?>
         <a class="nav-item" href="<?php echo esc_url(home_url('/dashboard/#note-search')); ?>"><?php mini_notes_icon('search'); ?> Search</a>
     </nav>
     <a class="new-note-link" href="<?php echo esc_url(add_query_arg('new', '1', home_url('/dashboard/'))); ?>"><?php mini_notes_icon('plus'); ?> New note</a>
@@ -32,7 +35,7 @@
 <div class="main-shell">
 <header class="topbar">
     <button class="menu-toggle" type="button" aria-controls="sidebar" aria-expanded="false" aria-label="Toggle navigation">☰</button>
-    <div class="breadcrumb">Workspace <span>/</span> <strong><?php echo is_front_page() ? 'Home' : esc_html(wp_strip_all_tags(get_the_title())); ?></strong></div>
+    <div class="breadcrumb">Workspace <span>/</span> <strong><?php echo esc_html(mini_notes_crumb_label()); ?></strong></div>
     <span class="private-label"><span></span> Personal & private</span>
 </header>
 <main id="main-content">
