@@ -44,6 +44,7 @@
     display: flex;
     flex-direction: column;
     width: auto;
+    min-width: 0;
     margin: 0;
     float: none;
     clear: none;
@@ -103,8 +104,10 @@
     display: flex;
     flex-direction: column;
     gap: 8px;
+    min-width: 0;
     padding: 16px;
     flex: 1;
+    overflow: hidden;
 }
 
 .mn-product-body .woocommerce-loop-product__title {
@@ -137,9 +140,34 @@
     font-size: 12px;
 }
 
-.mn-product-body .button {
-    margin-top: auto;
-    align-self: flex-start;
+/* WooCommerce button rules are more specific and paint the success check outside the card. */
+.woocommerce ul.products li.product.mn-product-card .mn-product-body a.button,
+.woocommerce ul.products li.product.mn-product-card .mn-product-body a.added_to_cart {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    align-self: stretch;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin: auto 0 0;
+    padding: 8px 10px;
+    font-size: 12px;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.woocommerce ul.products li.product.mn-product-card .mn-product-body a.button:focus-visible {
+    outline-offset: 2px;
+}
+
+.woocommerce ul.products li.product.mn-product-card .mn-product-body a.button.added::after {
+    margin-left: 0.35em;
+    vertical-align: middle;
+    line-height: 1;
+    flex: 0 0 auto;
 }
 
 .single-product div.product {
@@ -147,6 +175,13 @@
     grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
     gap: 32px;
     align-items: start;
+}
+
+.single-product div.product > .woocommerce-tabs,
+.single-product div.product > .related,
+.single-product div.product > .upsells {
+    grid-column: 1 / -1;
+    min-width: 0;
 }
 
 .single-product div.product::before,

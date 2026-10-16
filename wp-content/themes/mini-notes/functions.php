@@ -59,7 +59,7 @@ function mini_notes_shop_assets() {
             $deps[] = $handle;
         }
     }
-    wp_enqueue_style('mini-notes-shop', get_template_directory_uri() . '/assets/css/shop.css', $deps, '1.0.2');
+    wp_enqueue_style('mini-notes-shop', get_template_directory_uri() . '/assets/css/shop.css', $deps, '1.0.4');
 }
 add_action('wp_enqueue_scripts', 'mini_notes_shop_assets', 20);
 
@@ -78,9 +78,6 @@ function mini_notes_woocommerce() {
     add_action('woocommerce_before_shop_loop_item_title', 'mini_notes_product_thumb_open', 9);
     add_action('woocommerce_before_shop_loop_item_title', 'mini_notes_product_thumb_close', 12);
     add_action('woocommerce_shop_loop_item_title', 'mini_notes_product_title');
-    add_filter('loop_shop_columns', function () {
-        return 4;
-    });
     add_action('woocommerce_before_shop_loop', function () {
         echo '<div class="mn-shop-toolbar">';
     }, 15);
@@ -179,10 +176,81 @@ function mini_notes_update_cart() {
         'items' => $items,
         'totals' => $totals,
         'notices' => wc_print_notices(true),
-        'count' => WC()->cart->get_cart_contents_count(),
         'empty' => WC()->cart->is_empty(),
         'emptyHtml' => $empty_html,
     ]);
 }
 add_action('wp_ajax_mn_update_cart', 'mini_notes_update_cart');
 add_action('wp_ajax_nopriv_mn_update_cart', 'mini_notes_update_cart');
+
+function mini_notes_checkout_fields($fields) {
+    if (isset($fields['billing']['billing_phone'])) {
+        $fields['billing']['billing_phone']['required'] = true;
+        $fields['billing']['billing_phone']['custom_attributes']['maxlength'] = '20';
+    }
+    if (isset($fields['order']['order_comments'])) {
+        $fields['order']['order_comments']['maxlength'] = 180;
+        $fields['order']['order_comments']['custom_attributes']['maxlength'] = '180';
+    }
+    return $fields;
+}
+add_filter('woocommerce_checkout_fields', 'mini_notes_checkout_fields');
+
+// Block checkout ignores woocommerce_checkout_fields and reads the country locale, so Phone stays optional without this.
+function mini_notes_require_checkout_phone($locale) {
+    foreach ($locale as $country => $fields) {
+        $locale[$country]['phone']['required'] = true;
+    }
+    return $locale;
+}
+add_filter('woocommerce_get_country_locale', 'mini_notes_require_checkout_phone');
+
+function mini_notes_validate_checkout_values($phone, $first, $last, $note, $errors) {
+    $digits = preg_replace('/\D+/', '', (string) $phone);
+    if ($digits === '') {
+        $errors->add('billing_phone', 'Enter a phone number so we can contact you about this order.');
+    } elseif (strlen($digits) < 8 || strlen($digits) > 15) {
+        $errors->add('billing_phone', 'Enter a phone number with 8 to 15 digits.');
+    }
+
+    $names = [
+        'billing_first_name' => [$first, 'first name'],
+        'billing_last_name' => [$last, 'last name'],
+    ];
+    foreach ($names as $code => [$name, $label]) {
+        $name = trim((string) $name);
+        if (mb_strlen($name) < 2 || !preg_match('/\p{L}/u', $name)) {
+            $errors->add($code, 'Enter a ' . $label . ' using at least 2 letters.');
+        }
+    }
+
+    if (mb_strlen(trim((string) $note)) > 180) {
+        $errors->add('order_comments', 'Order notes must be 180 characters or fewer.');
+    }
+}
+
+// Classic checkout. The block checkout hook below runs before the payment gateway, including Cash on delivery.
+function mini_notes_validate_classic_checkout($data, $errors) {
+    mini_notes_validate_checkout_values(
+        $data['billing_phone'] ?? '',
+        $data['billing_first_name'] ?? '',
+        $data['billing_last_name'] ?? '',
+        $data['order_comments'] ?? '',
+        $errors
+    );
+}
+add_action('woocommerce_after_checkout_validation', 'mini_notes_validate_classic_checkout', 10, 2);
+
+// A WP_Error here aborts payment and does not create the order.
+function mini_notes_validate_block_checkout($order, $errors) {
+    mini_notes_validate_checkout_values(
+        $order->get_billing_phone(),
+        $order->get_billing_first_name(),
+        $order->get_billing_last_name(),
+        $order->get_customer_note(),
+        $errors
+    );
+}
+add_action('woocommerce_checkout_validate_order_before_payment', 'mini_notes_validate_block_checkout', 10, 2);
+
+require_once get_template_directory() . '/inc/order-workflow.php';
