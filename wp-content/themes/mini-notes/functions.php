@@ -78,9 +78,6 @@ function mini_notes_woocommerce() {
     add_action('woocommerce_before_shop_loop_item_title', 'mini_notes_product_thumb_open', 9);
     add_action('woocommerce_before_shop_loop_item_title', 'mini_notes_product_thumb_close', 12);
     add_action('woocommerce_shop_loop_item_title', 'mini_notes_product_title');
-    add_filter('loop_shop_columns', function () {
-        return 4;
-    });
     add_action('woocommerce_before_shop_loop', function () {
         echo '<div class="mn-shop-toolbar">';
     }, 15);
@@ -179,7 +176,6 @@ function mini_notes_update_cart() {
         'items' => $items,
         'totals' => $totals,
         'notices' => wc_print_notices(true),
-        'count' => WC()->cart->get_cart_contents_count(),
         'empty' => WC()->cart->is_empty(),
         'emptyHtml' => $empty_html,
     ]);
@@ -200,6 +196,7 @@ function mini_notes_checkout_fields($fields) {
 }
 add_filter('woocommerce_checkout_fields', 'mini_notes_checkout_fields');
 
+// Block checkout ignores woocommerce_checkout_fields and reads the country locale, so Phone stays optional without this.
 function mini_notes_require_checkout_phone($locale) {
     foreach ($locale as $country => $fields) {
         $locale[$country]['phone']['required'] = true;
@@ -232,6 +229,7 @@ function mini_notes_validate_checkout_values($phone, $first, $last, $note, $erro
     }
 }
 
+// Classic checkout. The block checkout hook below runs before the payment gateway, including Cash on delivery.
 function mini_notes_validate_classic_checkout($data, $errors) {
     mini_notes_validate_checkout_values(
         $data['billing_phone'] ?? '',
@@ -243,6 +241,7 @@ function mini_notes_validate_classic_checkout($data, $errors) {
 }
 add_action('woocommerce_after_checkout_validation', 'mini_notes_validate_classic_checkout', 10, 2);
 
+// A WP_Error here aborts payment and does not create the order.
 function mini_notes_validate_block_checkout($order, $errors) {
     mini_notes_validate_checkout_values(
         $order->get_billing_phone(),

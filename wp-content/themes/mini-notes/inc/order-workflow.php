@@ -45,6 +45,7 @@ function mini_notes_order_statuses($statuses) {
 }
 add_filter('wc_order_statuses', 'mini_notes_order_statuses');
 
+// No wc- prefix. Without these, Packed and Shipped look unpaid and WooCommerce restores stock.
 function mini_notes_paid_order_statuses($statuses) {
     $statuses[] = 'mn-packed';
     $statuses[] = 'mn-shipped';
@@ -52,6 +53,7 @@ function mini_notes_paid_order_statuses($statuses) {
 }
 add_filter('woocommerce_order_is_paid_statuses', 'mini_notes_paid_order_statuses');
 
+// Legacy WooCommerce → Reports only. Analytics uses the paid-status list above.
 function mini_notes_report_order_statuses($statuses) {
     if (!is_array($statuses)) {
         return $statuses;
@@ -79,6 +81,7 @@ function mini_notes_order_status_admin_css() {
 }
 add_action('admin_head', 'mini_notes_order_status_admin_css');
 
+// WooCommerce re-fires each action as {action}_notification. The email class must listen to that suffix or nothing is sent.
 function mini_notes_email_actions($actions) {
     $actions[] = 'woocommerce_order_status_processing_to_mn-packed';
     $actions[] = 'woocommerce_order_status_on-hold_to_mn-packed';
@@ -90,26 +93,16 @@ function mini_notes_email_actions($actions) {
 }
 add_filter('woocommerce_email_actions', 'mini_notes_email_actions');
 
-function mini_notes_email_color($value, $option) {
-    $colors = [
-        'woocommerce_email_base_color' => '#2e584b',
-        'woocommerce_email_background_color' => '#fafbf7',
-        'woocommerce_email_body_background_color' => '#ffffff',
-        'woocommerce_email_text_color' => '#263b36',
-        'woocommerce_email_footer_text_color' => '#7b8580',
-    ];
-    return $colors[$option] ?? $value;
-}
-
-foreach (array_keys([
-    'woocommerce_email_base_color' => true,
-    'woocommerce_email_background_color' => true,
-    'woocommerce_email_body_background_color' => true,
-    'woocommerce_email_text_color' => true,
-    'woocommerce_email_footer_text_color' => true,
-]) as $option) {
-    add_filter('option_' . $option, function ($value) use ($option) {
-        return mini_notes_email_color($value, $option);
+// Overrides the saved WooCommerce palette, so a color change in Settings → Emails will not show until these filters are removed.
+foreach ([
+    'woocommerce_email_base_color' => '#2e584b',
+    'woocommerce_email_background_color' => '#fafbf7',
+    'woocommerce_email_body_background_color' => '#ffffff',
+    'woocommerce_email_text_color' => '#263b36',
+    'woocommerce_email_footer_text_color' => '#7b8580',
+] as $option => $color) {
+    add_filter('option_' . $option, static function () use ($color) {
+        return $color;
     });
 }
 

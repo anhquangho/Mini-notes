@@ -140,6 +140,7 @@
     font-size: 12px;
 }
 
+/* WooCommerce button rules are more specific and paint the success check outside the card. */
 .woocommerce ul.products li.product.mn-product-card .mn-product-body a.button,
 .woocommerce ul.products li.product.mn-product-card .mn-product-body a.added_to_cart {
     display: inline-flex;
