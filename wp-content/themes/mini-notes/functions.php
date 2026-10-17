@@ -59,7 +59,7 @@ function mini_notes_shop_assets() {
             $deps[] = $handle;
         }
     }
-    wp_enqueue_style('mini-notes-shop', get_template_directory_uri() . '/assets/css/shop.css', $deps, '1.0.4');
+    wp_enqueue_style('mini-notes-shop', get_template_directory_uri() . '/assets/css/shop.css', $deps, '1.0.5');
 }
 add_action('wp_enqueue_scripts', 'mini_notes_shop_assets', 20);
 
