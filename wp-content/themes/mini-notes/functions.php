@@ -63,6 +63,62 @@ function mini_notes_shop_assets() {
 }
 add_action('wp_enqueue_scripts', 'mini_notes_shop_assets', 20);
 
+function mini_notes_is_commerce_page() {
+    return function_exists('is_woocommerce') && (is_woocommerce() || is_cart() || is_checkout() || is_account_page());
+}
+
+function mini_notes_trim_woocommerce_assets() {
+    if (!class_exists('WooCommerce')) {
+        return;
+    }
+    // No mini-cart in the header, so this script only polls admin-ajax.php.
+    wp_dequeue_script('wc-cart-fragments');
+    if (mini_notes_is_commerce_page()) {
+        return;
+    }
+    foreach (['woocommerce-general', 'woocommerce-layout', 'woocommerce-smallscreen', 'woocommerce-inline'] as $style) {
+        wp_dequeue_style($style);
+    }
+    foreach (['woocommerce', 'wc-add-to-cart', 'wc-jquery-blockui', 'wc-js-cookie', 'sourcebuster-js', 'wc-order-attribution'] as $script) {
+        wp_dequeue_script($script);
+    }
+    global $wp_scripts;
+    if (!$wp_scripts instanceof WP_Scripts) {
+        return;
+    }
+    foreach ($wp_scripts->queue as $handle) {
+        if ($handle === 'jquery') {
+            continue;
+        }
+        $deps = $wp_scripts->registered[$handle]->deps ?? [];
+        if (in_array('jquery', $deps, true) || in_array('jquery-core', $deps, true)) {
+            return;
+        }
+    }
+    wp_dequeue_script('jquery');
+    wp_dequeue_script('jquery-core');
+    wp_dequeue_script('jquery-migrate');
+}
+add_filter('woocommerce_enqueue_styles', function ($styles) {
+    return mini_notes_is_commerce_page() ? $styles : [];
+});
+add_filter('wp_resource_hints', function ($urls, $relation_type) {
+    // A non-empty cart makes WooCommerce prefetch the checkout bundle on every page.
+    if (mini_notes_is_commerce_page() || !in_array($relation_type, ['prefetch', 'prerender'], true)) {
+        return $urls;
+    }
+    $kept = [];
+    foreach ($urls as $url) {
+        $href = is_array($url) ? (string) ($url['href'] ?? '') : (string) $url;
+        if (!str_contains($href, '/plugins/woocommerce/')) {
+            $kept[] = $url;
+        }
+    }
+    return $kept;
+}, 20, 2);
+add_action('wp_enqueue_scripts', 'mini_notes_trim_woocommerce_assets', 100);
+add_action('wp_footer', 'mini_notes_trim_woocommerce_assets', 1);
+
 function mini_notes_woocommerce() {
     if (!class_exists('WooCommerce')) {
         return;
