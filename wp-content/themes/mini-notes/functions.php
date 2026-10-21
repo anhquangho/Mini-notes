@@ -12,10 +12,34 @@ function mini_notes_setup() {
 }
 add_action('after_setup_theme', 'mini_notes_setup');
 
+function mini_notes_klaviyo_config() {
+    $path = get_template_directory() . '/klaviyo.local.json';
+    $empty = ['companyId' => '', 'listId' => ''];
+    if (!is_readable($path)) {
+        return $empty;
+    }
+    $data = json_decode((string) file_get_contents($path), true);
+    if (!is_array($data)) {
+        return $empty;
+    }
+    return [
+        'companyId' => preg_replace('/[^A-Za-z0-9]/', '', (string) ($data['companyId'] ?? '')),
+        'listId' => preg_replace('/[^A-Za-z0-9]/', '', (string) ($data['listId'] ?? '')),
+    ];
+}
+
 function mini_notes_assets() {
     $uri = get_template_directory_uri();
-    wp_enqueue_style('mini-notes-app', $uri . '/assets/css/app.css', [], '1.0.0');
+    $klaviyo = mini_notes_klaviyo_config();
+    wp_enqueue_style('mini-notes-app', $uri . '/assets/css/app.css', [], '1.0.1');
     wp_enqueue_script('mini-notes-app', $uri . '/assets/js/app.js', [], '1.0.0', true);
+    wp_enqueue_script('mini-notes-signup', $uri . '/assets/js/signup.js', [], '1.0.0', true);
+    wp_localize_script('mini-notes-signup', 'mnSignup', [
+        'companyId' => $klaviyo['companyId'],
+        'listId' => $klaviyo['listId'],
+        'revision' => '2026-10-15',
+        'source' => 'Mini Notes footer',
+    ]);
 }
 add_action('wp_enqueue_scripts', 'mini_notes_assets');
 
