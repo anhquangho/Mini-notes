@@ -1,0 +1,289 @@
+.shop-wrap .woocommerce-products-header__title {
+    font-size: 32px;
+    letter-spacing: -1px;
+    margin-bottom: 8px;
+}
+
+.mn-shop-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 8px 0 18px;
+}
+
+.mn-shop-toolbar .woocommerce-result-count,
+.mn-shop-toolbar .woocommerce-ordering {
+    float: none;
+    margin: 0;
+}
+
+.mn-shop-toolbar select {
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: #fff;
+    color: var(--ink);
+    padding: 6px 8px;
+}
+
+.woocommerce ul.products {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+    margin: 0;
+    padding: 0;
+    clear: both;
+}
+
+.woocommerce ul.products::before,
+.woocommerce ul.products::after {
+    content: none;
+}
+
+.woocommerce ul.products li.product.mn-product-card {
+    display: flex;
+    flex-direction: column;
+    width: auto;
+    min-width: 0;
+    margin: 0;
+    float: none;
+    clear: none;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.mn-product-media {
+    position: relative;
+    background: #eef2e6;
+    aspect-ratio: 1;
+}
+
+.mn-product-thumb {
+    position: absolute;
+    inset: 0;
+    display: block;
+}
+
+.woocommerce ul.products li.product .mn-product-thumb img {
+    width: 100%;
+    height: 100%;
+    max-width: none;
+    object-fit: cover;
+    display: block;
+}
+
+.woocommerce ul.products li.product.mn-product-card span.onsale {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    left: auto;
+    bottom: auto;
+    z-index: 2;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: auto;
+    height: auto;
+    min-width: 0;
+    min-height: 0;
+    margin: 0;
+    padding: 3px 8px;
+    border-radius: 4px;
+    background: #f7e6da;
+    color: #ab795b;
+    font-size: 10px;
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.mn-product-body {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 0;
+    padding: 16px;
+    flex: 1;
+    overflow: hidden;
+}
+
+.mn-product-body .woocommerce-loop-product__title {
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0;
+    margin: 0;
+    overflow-wrap: anywhere;
+}
+
+.mn-product-body .woocommerce-loop-product__title a:hover {
+    color: var(--green);
+}
+
+.mn-product-body .price {
+    color: var(--green);
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0;
+}
+
+.mn-product-body .price del {
+    color: var(--muted);
+    font-weight: 500;
+    margin-right: 6px;
+}
+
+.mn-product-body .star-rating {
+    margin: 0;
+    font-size: 12px;
+}
+
+/* WooCommerce button rules are more specific and paint the success check outside the card. */
+.woocommerce ul.products li.product.mn-product-card .mn-product-body a.button,
+.woocommerce ul.products li.product.mn-product-card .mn-product-body a.added_to_cart {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    align-self: stretch;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    box-sizing: border-box;
+    margin: auto 0 0;
+    padding: 8px 10px;
+    font-size: 12px;
+    line-height: 1.2;
+    white-space: nowrap;
+    overflow: hidden;
+}
+
+.woocommerce ul.products li.product.mn-product-card .mn-product-body a.button:focus-visible {
+    outline-offset: 2px;
+}
+
+.woocommerce ul.products li.product.mn-product-card .mn-product-body a.button.added::after {
+    margin-left: 0.35em;
+    vertical-align: middle;
+    line-height: 1;
+    flex: 0 0 auto;
+}
+
+.single-product div.product {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: 32px;
+    align-items: start;
+}
+
+.single-product div.product > .woocommerce-tabs,
+.single-product div.product > .related,
+.single-product div.product > .upsells {
+    grid-column: 1 / -1;
+    min-width: 0;
+}
+
+.single-product div.product::before,
+.single-product div.product::after {
+    content: none;
+}
+
+.woocommerce div.product div.images,
+.woocommerce div.product div.summary {
+    float: none;
+    width: auto;
+    margin: 0;
+}
+
+.woocommerce div.product .product_title {
+    letter-spacing: -1px;
+}
+
+.woocommerce div.product p.price {
+    color: var(--green);
+    font-size: 22px;
+}
+
+@media (max-width: 1100px) {
+    .woocommerce ul.products {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 800px) {
+    .woocommerce ul.products {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .single-product div.product {
+        grid-template-columns: 1fr;
+    }
+
+    .mn-shop-toolbar {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
+
+/* Phones in landscape are wider than 640px, so the desktop sidebar would still squeeze the payment form. */
+@media (max-width: 900px) {
+    body.woocommerce-checkout .sidebar {
+        position: fixed;
+        left: 0;
+        top: 0;
+        z-index: 30;
+        width: 258px;
+        height: 100vh;
+        transform: translateX(-100%);
+        transition: transform .2s;
+    }
+
+    body.woocommerce-checkout.menu-open .sidebar {
+        transform: translateX(0);
+    }
+
+    body.woocommerce-checkout .menu-toggle {
+        display: block;
+    }
+
+    body.woocommerce-checkout .topbar {
+        height: 62px;
+        padding: 0 18px;
+        justify-content: flex-start;
+    }
+
+    body.woocommerce-checkout .checkout-wrap {
+        padding: 20px 16px 32px;
+    }
+
+    .checkout-wrap .wc-block-checkout__actions .wc-block-components-button {
+        min-height: 48px;
+        font-size: 16px;
+        width: 100%;
+    }
+
+    .checkout-wrap textarea,
+    .checkout-wrap .wc-block-components-textarea {
+        font-size: 16px;
+    }
+
+    .checkout-wrap .wc-block-components-radio-control__option,
+    .checkout-wrap .wc-block-components-checkbox {
+        min-height: 44px;
+    }
+
+    .checkout-wrap .wc-block-components-checkout-order-summary__title {
+        min-height: 44px;
+    }
+}
+
+@media (max-width: 520px) {
+    .woocommerce ul.products {
+        grid-template-columns: 1fr;
+    }
+
+    .shop-wrap .woocommerce-products-header__title {
+        font-size: 28px;
+    }
+}
