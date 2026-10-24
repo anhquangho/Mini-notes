@@ -28,6 +28,10 @@ wp-content/debug.log
 
 # Generated test output
 docs/automated-results.txt
+docs/WOOCOMMERCE-TEST-CASES.md
+
+# Public Klaviyo ids for the local footer form
+wp-content/themes/mini-notes/klaviyo.local.json
  
 # Local and editor files
 .DS_Store
