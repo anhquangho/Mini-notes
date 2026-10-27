@@ -342,3 +342,4 @@ function mini_notes_validate_block_checkout($order, $errors) {
 add_action('woocommerce_checkout_validate_order_before_payment', 'mini_notes_validate_block_checkout', 10, 2);
 
 require_once get_template_directory() . '/inc/order-workflow.php';
+require_once get_template_directory() . '/inc/order-webhook.php';
