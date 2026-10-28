@@ -6,6 +6,8 @@
   const button = form.querySelector('button');
   const status = form.querySelector('.footer-signup-status');
 
+  let sending = false;
+
   function show(message, isError) {
     status.textContent = message;
     status.classList.toggle('is-error', isError);
@@ -13,11 +15,13 @@
 
   form.addEventListener('submit', async event => {
     event.preventDefault();
+    if (sending) return;
     const email = input.value.trim();
     if (!config.companyId || !config.listId) {
       show('Signup is not connected yet.', true);
       return;
     }
+    sending = true;
     button.disabled = true;
     show('Joining the list…', false);
     try {
@@ -53,6 +57,7 @@
     } catch (error) {
       show('Could not join the list. Try again.', true);
     } finally {
+      sending = false;
       button.disabled = false;
     }
   });
